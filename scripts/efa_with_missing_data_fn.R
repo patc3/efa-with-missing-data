@@ -41,7 +41,7 @@ get_efa <- function(df)
 
 
 # add scores
-get_factor_scores <- function(df, efa)
+get_factor_scores <- function(efa, df)
 {
   #scores <- efa$scores # matrix
   scores <- predict(efa, df) |> as.data.frame() # predict.psych
@@ -52,5 +52,23 @@ get_factor_scores <- function(df, efa)
   return(scores)
 }
 
+
+#### missing ####
+impose_missing <- function(df, prop_missing=.25)
+{
+  # vars with missing: 2nd item of each factor
+  v_missing <- seq(2,12,3) #sample(1:ncol(df), size = 4, replace = FALSE)
+  v_missing <- v_missing |> sample(nrow(df), replace = TRUE)
+  
+  # row missing
+  i_missing <- (1:nrow(df)) |> sample(prop_missing*nrow(df) |> round())
+  
+  # impose
+  df_mis <- df
+  for(i in i_missing) df_mis[i, v_missing[i]] <- NA
+  
+  # out
+  return(df_mis)
+}
 
 

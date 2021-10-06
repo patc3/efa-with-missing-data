@@ -6,9 +6,14 @@ pip
 "
 
 source("scripts/efa_with_missing_data_fn.R")
-df <- simulate_data(n=100000)
+df <- simulate_data(n=1000)
 efa <- get_efa(df)
-scores <- df |> get_factor_scores(efa)
+scores <- efa |> get_factor_scores(df)
+
+df_mis <- df |> impose_missing()
+
+
+
 
 
 "
