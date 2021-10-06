@@ -41,10 +41,14 @@ get_efa <- function(df)
 
 
 # add scores
-get_factor_scores <- function(efa, df)
+get_factor_scores <- function(efa, df, impute=FALSE)
 {
+  # impute?
+  df_orig <- df
+  if(impute) df <- df |> impute_items()
+  
   #scores <- efa$scores # matrix
-  scores <- predict(efa, df) |> as.data.frame() # predict.psych
+  scores <- predict(efa, df, old.data=df_orig) |> as.data.frame() # predict.psych
   v_factors <- paste0("F", 1:ncol(scores))
   colnames(scores) <- v_factors
   
@@ -69,6 +73,20 @@ impose_missing <- function(df, prop_missing=.25)
   
   # out
   return(df_mis)
+}
+
+
+impute_items <- function(df, fn=stats::median)
+{
+  # impute
+  for(col in colnames(df))
+  {
+    df[df[,col] |> is.na(),col] <- fn(df[,col], na.rm=TRUE)
+  }
+
+  # out
+  print("Imputed missing item values with median")
+  return(df)
 }
 
 
